@@ -1,8 +1,0 @@
-Here's a couple of examples of integrating clientside charting components with tapestry
- https://github.com/got5/tapestry5-highcharts
- https://github.com/uklance/tapestry-graphael
-
-And here's a serverside charting library
- http://tawus.wordpress.com/2011/07/30/tapestry-jfreechart-integration/
-
-
