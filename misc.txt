@@ -1,0 +1,2 @@
+https://github.com/Atmosphere/atmosphere/blob/master/modules/cpr/src/main/java/org/atmosphere/cpr/AtmosphereResponse.java#L617
+https://github.com/Atmosphere/atmosphere/blob/master/modules/cpr/src/main/java/org/atmosphere/cpr/AtmosphereInterceptorWriter.java#L54
