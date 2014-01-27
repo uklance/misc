@@ -87,6 +87,10 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
     }
 
     private void validateSortedFields(List<PlasticField> sortedFields) {
+        if (sortedFields.size() < 2)
+        {
+            return;
+        }
         List<Integer> expectedIndexes = CollectionFactory.newList();
         List<Integer> actualIndexes = CollectionFactory.newList();
         Set<Boolean> activateFlags = CollectionFactory.newSet();
