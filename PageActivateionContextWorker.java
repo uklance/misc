@@ -55,22 +55,22 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
 
     private void transformFields(TransformationSupport support, List<PlasticField> fields)
     {
-    	List<PlasticField> sortedFields = sortByIndex(fields);
-    	validateSortedFields(sortedFields);
-    	
-    	PlasticField firstField = sortedFields.get(0);
-    	PageActivationContext firstAnnotation = firstField.getAnnotation(PageActivationContext.class);
+        List<PlasticField> sortedFields = sortByIndex(fields);
+        validateSortedFields(sortedFields);
+        
+        PlasticField firstField = sortedFields.get(0);
+        PageActivationContext firstAnnotation = firstField.getAnnotation(PageActivationContext.class);
 
         FieldHandle[] handles = new FieldHandle[sortedFields.size()];
         String[] typeNames = new String[sortedFields.size()];
         int i = 0;
         for (PlasticField field : sortedFields) {
-        	handles[i] = field.getHandle();
-        	typeNames[i] = field.getTypeName();
-        	++i;
+            handles[i] = field.getHandle();
+            typeNames[i] = field.getTypeName();
+            ++i;
         }
-    	
-    	if (firstAnnotation.activate())
+        
+        if (firstAnnotation.activate())
         {
             support.addEventHandler(EventConstants.ACTIVATE, 1,
                     "PageActivationContextWorker activate event handler",
@@ -87,68 +87,68 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
     }
 
     private void validateSortedFields(List<PlasticField> sortedFields) {
-		List<Integer> expectedIndexes = CollectionFactory.newList();
-		List<Integer> actualIndexes = CollectionFactory.newList();
-    	Set<Boolean> activateFlags = CollectionFactory.newSet();
-    	Set<Boolean> passivateFlags = CollectionFactory.newSet();
-    	
-    	for (int i = 0; i < sortedFields.size(); ++i) {
-    		PlasticField field = sortedFields.get(i);
-    		PageActivationContext ann = field.getAnnotation(PageActivationContext.class);
-    		expectedIndexes.add(i);
-    		actualIndexes.add(ann.index());
-    		activateFlags.add(ann.activate());
-    		passivateFlags.add(ann.passivate());
-    	}
-    	
-    	List<String> errors = CollectionFactory.newList(); 
-    	if (!expectedIndexes.equals(actualIndexes)) {
-    		errors.add(String.format("Illegal indexes - expected %s, found %s", expectedIndexes, actualIndexes));
-    	}
-    	if (activateFlags.size() > 1) {
-    		errors.add("Illegal activate flags, all @PageActivateionContext fields must have the same activate flag");
-    	}
-    	if (passivateFlags.size() > 1) {
-    		errors.add("Illegal passivate flags, all @PageActivateionContext fields must have the same passivate flag");
-    	}
-    	if (!errors.isEmpty()) {
-    		throw new RuntimeException(String.format("Invalid values for @PageActivationContext: %s", InternalUtils.join(errors)));
-    	}
-	}
+        List<Integer> expectedIndexes = CollectionFactory.newList();
+        List<Integer> actualIndexes = CollectionFactory.newList();
+        Set<Boolean> activateFlags = CollectionFactory.newSet();
+        Set<Boolean> passivateFlags = CollectionFactory.newSet();
+        
+        for (int i = 0; i < sortedFields.size(); ++i) {
+            PlasticField field = sortedFields.get(i);
+            PageActivationContext ann = field.getAnnotation(PageActivationContext.class);
+            expectedIndexes.add(i);
+            actualIndexes.add(ann.index());
+            activateFlags.add(ann.activate());
+            passivateFlags.add(ann.passivate());
+        }
+        
+        List<String> errors = CollectionFactory.newList(); 
+        if (!expectedIndexes.equals(actualIndexes)) {
+            errors.add(String.format("Illegal indexes - expected %s, found %s", expectedIndexes, actualIndexes));
+        }
+        if (activateFlags.size() > 1) {
+            errors.add("Illegal activate flags, all @PageActivationContext fields must have the same activate flag");
+        }
+        if (passivateFlags.size() > 1) {
+            errors.add("Illegal passivate flags, all @PageActivationContext fields must have the same passivate flag");
+        }
+        if (!errors.isEmpty()) {
+            throw new RuntimeException(String.format("Invalid values for @PageActivationContext: %s", InternalUtils.join(errors)));
+        }
+    }
     
-	private List<PlasticField> sortByIndex(List<PlasticField> fields)
+    private List<PlasticField> sortByIndex(List<PlasticField> fields)
     {
-    	List<PlasticField> sortedFields = new ArrayList<PlasticField>(fields);
-    	Collections.sort(sortedFields, new Comparator<PlasticField>() {
-    		public int compare(PlasticField field1, PlasticField field2) {
-    			int index1 = field1.getAnnotation(PageActivationContext.class).index();
-    			int index2 = field2.getAnnotation(PageActivationContext.class).index();
+        List<PlasticField> sortedFields = new ArrayList<PlasticField>(fields);
+        Collections.sort(sortedFields, new Comparator<PlasticField>() {
+            public int compare(PlasticField field1, PlasticField field2) {
+                int index1 = field1.getAnnotation(PageActivationContext.class).index();
+                int index2 = field2.getAnnotation(PageActivationContext.class).index();
 
-    			int compare = new Integer(index1).compareTo(index2);
-    			if (compare == 0)
-    			{
-    				compare = field1.getName().compareTo(field2.getName());
-    			}
-    			return compare;
-    		}
-		});
-    	return sortedFields;
-	}
+                int compare = new Integer(index1).compareTo(index2);
+                if (compare == 0)
+                {
+                    compare = field1.getName().compareTo(field2.getName());
+                }
+                return compare;
+            }
+        });
+        return sortedFields;
+    }
 
-	private static ComponentEventHandler createActivationHandler(final String[] fieldTypes, final FieldHandle[] handles)
+    private static ComponentEventHandler createActivationHandler(final String[] fieldTypes, final FieldHandle[] handles)
     {
         return new ComponentEventHandler()
         {
             public void handleEvent(Component instance, ComponentEvent event)
             {
                 EventContext eventContext = event.getEventContext();
-            	for (int i = 0; i < eventContext.getCount(); ++i)
-            	{
-            		String fieldType = fieldTypes[i];
-            		FieldHandle handle = handles[i];
-            		Object value = event.coerceContext(i, fieldType);
-            		handle.set(instance, value);
-            	}
+                for (int i = 0; i < eventContext.getCount(); ++i)
+                {
+                    String fieldType = fieldTypes[i];
+                    FieldHandle handle = handles[i];
+                    Object value = event.coerceContext(i, fieldType);
+                    handle.set(instance, value);
+                }
             }
         };
     }
@@ -161,13 +161,13 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
             {
                 LinkedList<Object> list = CollectionFactory.newLinkedList();
                 for (int i = handles.length - 1; i >= 0; i--) {
-                	FieldHandle handle = handles[i];
-                	Object value = handle.get(instance);
+                    FieldHandle handle = handles[i];
+                    Object value = handle.get(instance);
 
-                	// ignore trailing nulls
-                	if (value != null || !list.isEmpty()) {
-                		list.addFirst(value);
-                	}
+                    // ignore trailing nulls
+                    if (value != null || !list.isEmpty()) {
+                        list.addFirst(value);
+                    }
                 }
 
                 event.storeResult(list);
